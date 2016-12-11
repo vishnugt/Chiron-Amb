@@ -27,22 +27,25 @@ public class Registeration extends AppCompatActivity {
 
         Intent intent  = getIntent();
 
+        String tempp = intent.getStringExtra("outputresponse");
 
-        Log.d("json", intent.getStringExtra("outputresponse"));
+        Log.d("abcjson", temp);
         try
         {
-            JSONArray jsonarray = new JSONArray(intent.getStringExtra("outputresponse"));
+            JSONArray jsonarray = new JSONArray(tempp);
             for (int i = 0; i < jsonarray.length(); i++) {
                 JSONObject jsonobject = jsonarray.getJSONObject(i);
-                String name = jsonobject.getString("vehicle_no");
+                String name = jsonobject.getString("Vehicle_no");
+                Log.d("jsonst", name);
                 temp = temp + name + "@@";
-                tempid = tempid + jsonobject.getString("id") + "@@";
+                tempid = tempid + jsonobject.getInt("Id") + "@@";
+                Log.d("jsonid", Integer.toString(jsonobject.getInt("Id")) );
                 Log.d("jsons", name + "@@");
             }
         }
         catch(JSONException j)
         {
-            Log.d("json", "error");
+            Log.d("json", temp.toString());
         }
 
         listview = (ListView)findViewById(R.id.listview);

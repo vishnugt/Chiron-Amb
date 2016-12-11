@@ -74,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             try {
-                URL url = new URL("https://auth.archon40.hasura-app.io/signup");
+                URL url = new URL("http://23b8e3b4.ngrok.io/amb/register");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setDoOutput(true);
@@ -97,7 +97,7 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            //Toast.makeText(getApplicationContext(), outputresponse, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), outputresponse, Toast.LENGTH_SHORT).show();
             aftercomplete();
         }
 

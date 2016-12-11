@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,9 +41,12 @@ public class FormFill extends AppCompatActivity {
 
     }
 
+    GPSTracker tracker;
+
     public void btnfunc(View v)
     {
 
+        tracker = new GPSTracker(this);
 
         progress = new ProgressDialog(this);
         progress.setTitle("Loading");
@@ -61,9 +65,12 @@ public class FormFill extends AppCompatActivity {
             json = new JSONObject();
             try
             {
-                json.put("id",params[0]);
-                json.put("name", params[1]);
-                json.put("phone_no", params[2]);
+                json.put("Id",Integer.parseInt(params[0]));
+                json.put("Lat", Double.toString(tracker.getLatitude()));
+                json.put("Long", Double.toString(tracker.getLongitude()));
+                json.put("Phone", params[2]);
+                json.put("Driver", params[1]);
+                json.put("Status", true);
 
             }catch (JSONException j)
 
@@ -72,7 +79,8 @@ public class FormFill extends AppCompatActivity {
             }
 
             try {
-                URL url = new URL("https://auth.archon40.hasura-app.io/signup");
+                Log.d("gg", json.toString());
+                URL url = new URL("http://23b8e3b4.ngrok.io/amb/update");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setDoOutput(true);
@@ -95,7 +103,7 @@ public class FormFill extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            //Toast.makeText(getApplicationContext(), outputresponse, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), outputresponse, Toast.LENGTH_SHORT).show();
             aftercomplete();
         }
 
@@ -114,7 +122,7 @@ public class FormFill extends AppCompatActivity {
         progress.dismiss();
 
 
-        SharedPreferences.Editor editor = getSharedPreferences("db", MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = getSharedPreferences("dbb", MODE_PRIVATE).edit();
         editor.putString("id", id);
         editor.commit();
 

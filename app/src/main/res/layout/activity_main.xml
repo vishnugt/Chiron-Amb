@@ -12,6 +12,7 @@
         android:layout_weight="1">
         <com.google.android.gms.maps.MapView android:id="@+id/mapview"
             android:layout_width="fill_parent"
+            android:layout_margin="5sp"
             android:layout_height="fill_parent" />
     </LinearLayout>
 
@@ -19,17 +20,17 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_weight="2">
 
-
-        <TextView
-            android:text=""
+        <ToggleButton
+            android:layout_margin="5sp"
+            android:text="ToggleButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:id="@+id/textView2"
-            android:layout_marginLeft="10sp"
-            android:layout_marginTop="10sp"/>
+            android:id="@+id/toggleButton"
+            android:onClick="togglebtn"
+            android:textOn="On-Duty"
+            android:textOff="Off-Duty"/>
     </LinearLayout>
 
 </LinearLayout>
