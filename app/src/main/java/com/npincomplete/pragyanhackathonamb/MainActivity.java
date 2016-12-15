@@ -19,6 +19,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,16 +42,31 @@ public class MainActivity extends AppCompatActivity {
     MapView mapView;
     GoogleMap map;
 
+    String latt;
+    String longg;
+
+    public void btnn(View view)
+    {
+        Intent intent = new Intent(this, Webdisplay.class);
+
+        startActivity(intent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
 
+        //FirebaseMessaging.getInstance().subscribeToTopic("test");
+/*
+        FirebaseInstanceId.getInstance().getToken();
+*/
+
         SharedPreferences prefs = getSharedPreferences("dbb", MODE_PRIVATE);
         id = prefs.getString("id", null);
 
-        if (id == null)
+        if (id == " a")
         {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -72,12 +89,10 @@ public class MainActivity extends AppCompatActivity {
         // Updates the location and zoom of the MapView
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(tracker.getLatitude(), tracker.getLongitude()), 15F);
         map.animateCamera(cameraUpdate);
-        new MasterTask().execute();
-
-        toggle = (ToggleButton) findViewById(R.id.toggleButton);
-        toggle.setChecked(true);
+        //new MasterTask().execute();
 
     }
+
 
     @Override
     public void onResume() {
@@ -132,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.d("in async", json.toString());
                 try {
-                    URL url = new URL("http://23b8e3b4.ngrok.io/amb/update");
+                    URL url = new URL("http://02a4ba0f.ngrok.io/amb/update");
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("POST");
                     connection.setDoOutput(true);
@@ -170,13 +185,4 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    ToggleButton toggle;
-    public void togglebtn(View view)
-    {
-        boolean stat = toggle.isChecked();
-        if(stat)
-            status = true;
-        else
-            status = false;
-        }
     }

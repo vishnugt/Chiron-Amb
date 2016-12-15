@@ -20,17 +20,18 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="2">
-
-        <ToggleButton
-            android:layout_margin="5sp"
-            android:text="ToggleButton"
+        android:layout_weight="7">
+        <Button
+            android:layout_marginLeft="20sp"
+            android:layout_marginRight="20sp"
+            android:layout_marginTop="5sp"
+            android:layout_marginBottom="10sp"
+            android:text="Drop Patient"
+            android:onClick="btnn"
+            android:textColor="@color/emergency"
+            android:background="@color/background"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/toggleButton"
-            android:onClick="togglebtn"
-            android:textOn="On-Duty"
-            android:textOff="Off-Duty"/>
+            android:layout_height="match_parent"
+            android:id="@+id/btnn" />
     </LinearLayout>
-
 </LinearLayout>
