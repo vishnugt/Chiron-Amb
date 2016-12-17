@@ -40,6 +40,7 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         et1 = (EditText)findViewById(R.id.email);
+        et2 = (EditText)findViewById(R.id.password);
         et1.requestFocus();
     }
 
@@ -48,6 +49,8 @@ public class LoginActivity extends Activity {
     ProgressDialog progress;
     JSONObject json;
     String outputresponse = "";
+
+    GPSTracker tracker;
 
     public void btnfunc(View v)
     {
@@ -58,20 +61,30 @@ public class LoginActivity extends Activity {
         progress.setCancelable(false);
         progress.show();
 */
-        new LongOperation2().execute(et1.getText().toString());
+
+        tracker = new GPSTracker(this);
+        new LongOperation2().execute(et1.getText().toString(), et2.getText().toString());
     }
 
+
+    String fcm;
 
     private class LongOperation2 extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
 
 
+            SharedPreferences prefs = getSharedPreferences("db", MODE_PRIVATE);
+            fcm = prefs.getString("fcm", "fcm");
+
             json = new JSONObject();
             try
             {
-                json.put("Auth",Integer.parseInt(params[0]) );
-                json.put("Token", "asdfasdfa");
+                json.put("Username", params[0] );
+                json.put("Password", params[1] );
+                json.put("Lat", String.valueOf(tracker.getLatitude()) );
+                json.put("Long", String.valueOf(tracker.getLongitude()) );
+                json.put("Token", fcm);
 
             }catch (JSONException j)
 
@@ -121,26 +134,29 @@ public class LoginActivity extends Activity {
     public void aftercomplete()
     {
 
-
-       /* if( FirebaseInstanceId.getInstance().getToken() != null)
-            Log.d("fcmid", FirebaseInstanceId.getInstance().getToken());
-*/
+        String id = null;
         Toast.makeText(this, outputresponse, Toast.LENGTH_SHORT).show();
-        //progress.dismiss();
         if( outputresponse != null) {
             try
             {
                 JSONObject json = new JSONObject(outputresponse);
-                SharedPreferences.Editor editor = getSharedPreferences("dbb", MODE_PRIVATE).edit();
-                editor.putString("id", json.getString("Id"));
-                editor.commit();
-
+                id = json.getString("Id");
             } catch (JSONException j)
             {
                 Log.d("error", "noob error");
             }
 
-            Log.d("fcmid", "" );
+            if(id == null )
+
+            {
+                Toast.makeText(this, "Username password wrong combination!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            SharedPreferences.Editor editor = getSharedPreferences("dbb", MODE_PRIVATE).edit();
+            editor.putString("id", id);
+            editor.commit();
+            Log.d("fcmid", fcm);
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
         }
