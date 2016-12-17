@@ -1,5 +1,6 @@
 package com.npincomplete.pragyanhackathonamb;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,6 +16,10 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
+
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,7 +31,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends Activity {
 
 
     EditText et1, et2;
@@ -46,13 +51,13 @@ public class LoginActivity extends AppCompatActivity {
 
     public void btnfunc(View v)
     {
-
-
-        progress = new ProgressDialog(this);
+/*
+        progress = new ProgressDialog(getApplicationContext());
         progress.setTitle("Loading");
         progress.setMessage("Wait while loading...");
         progress.setCancelable(false);
         progress.show();
+*/
         new LongOperation2().execute(et1.getText().toString());
     }
 
@@ -65,7 +70,8 @@ public class LoginActivity extends AppCompatActivity {
             json = new JSONObject();
             try
             {
-                json.put("auth_token",params[0]);
+                json.put("Auth",Integer.parseInt(params[0]) );
+                json.put("Token", "asdfasdfa");
 
             }catch (JSONException j)
 
@@ -74,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             try {
-                URL url = new URL("http://02a4ba0f.ngrok.io/amb/register");
+                URL url = new URL("https://4e16c88d.ngrok.io/vehicle/register");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setDoOutput(true);
@@ -97,6 +103,7 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
+            //  progress.dismiss();
             Toast.makeText(getApplicationContext(), outputresponse, Toast.LENGTH_SHORT).show();
             aftercomplete();
         }
@@ -113,13 +120,30 @@ public class LoginActivity extends AppCompatActivity {
 
     public void aftercomplete()
     {
-        progress.dismiss();
 
-        Log.d("login", outputresponse);
 
-        Intent intent = new Intent(this, Registeration.class);
-        intent.putExtra("outputresponse", outputresponse);
-        startActivity(intent);
+       /* if( FirebaseInstanceId.getInstance().getToken() != null)
+            Log.d("fcmid", FirebaseInstanceId.getInstance().getToken());
+*/
+        Toast.makeText(this, outputresponse, Toast.LENGTH_SHORT).show();
+        //progress.dismiss();
+        if( outputresponse != null) {
+            try
+            {
+                JSONObject json = new JSONObject(outputresponse);
+                SharedPreferences.Editor editor = getSharedPreferences("dbb", MODE_PRIVATE).edit();
+                editor.putString("id", json.getString("Id"));
+                editor.commit();
+
+            } catch (JSONException j)
+            {
+                Log.d("error", "noob error");
+            }
+
+            Log.d("fcmid", "" );
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+        }
     }
 
 }

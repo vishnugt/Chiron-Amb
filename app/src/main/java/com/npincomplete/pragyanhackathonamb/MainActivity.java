@@ -33,6 +33,10 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import de.tavendo.autobahn.WebSocketConnection;
+import de.tavendo.autobahn.WebSocketException;
+import de.tavendo.autobahn.WebSocketHandler;
+
 import static android.R.id.toggle;
 
 public class MainActivity extends AppCompatActivity {
@@ -52,21 +56,53 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private static final String TAG = "de.tavendo.test1";
+
+    private final WebSocketConnection mConnection = new WebSocketConnection();
+
+    private void start() {
+        final String wsuri = "ws://4e16c88d.ngrok.io/vehicle/update";
+        try {
+            mConnection.connect(wsuri, new WebSocketHandler() {
+                @Override
+                public void onOpen() {
+                    Log.d(TAG, "Status: Connected to " + wsuri);
+                    new TickerAsync().execute();
+
+                    //mConnection.sendTextMessage("Hello, world!");
+                }
+                @Override
+                public void onTextMessage(String payload)
+                {
+                    Log.d(TAG, "Got echo: " + payload);
+                }
+
+                @Override
+                public void onClose(int code, String reason) {
+                    Log.d(TAG, "Connection lost.");
+                }
+            });
+        } catch (WebSocketException e) {
+
+            Log.d(TAG, e.toString());
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        tracker = new GPSTracker(this);
+        start();
 
-        //FirebaseMessaging.getInstance().subscribeToTopic("test");
-/*
-        FirebaseInstanceId.getInstance().getToken();
-*/
+
+
 
         SharedPreferences prefs = getSharedPreferences("dbb", MODE_PRIVATE);
         id = prefs.getString("id", null);
 
-        if (id == " a")
+        if (id == null )
         {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -92,7 +128,65 @@ public class MainActivity extends AppCompatActivity {
         //new MasterTask().execute();
 
     }
+/*
 
+    JSONObject json = new JSONObject();
+    try {
+        json.put("Id", id);
+        json.put("Lat", tracker.getLatitude());
+        json.put("Long", tracker.getLocation());
+    }
+    catch(JSONException j)
+    {
+
+    }
+    mConnection.sendTextMessage(json.toString());
+*/
+
+
+
+    private class TickerAsync extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("Id", Integer.parseInt(id));
+                json.put("Lat", String.valueOf(tracker.getLatitude()) );
+                json.put("Long", String.valueOf(tracker.getLongitude()) );
+            }
+            catch(JSONException j)
+            {
+
+            }
+
+            Log.d("jsonprint", json.toString());
+            mConnection.sendTextMessage( json.toString() );
+            try{
+
+                Thread.sleep(30000);
+            }
+            catch(InterruptedException r)
+            {
+
+            }
+            return "";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            //  progress.dismiss();
+            Toast.makeText(getApplicationContext(), outputresponse, Toast.LENGTH_SHORT).show();
+            new TickerAsync().execute();
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+    }
 
     @Override
     public void onResume() {

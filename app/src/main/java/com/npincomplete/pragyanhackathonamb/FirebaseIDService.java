@@ -32,5 +32,6 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
     private void sendRegistrationToServer(String token) {
         // Add custom implementation, as needed.
 
+        Log.d("fcmid", FirebaseInstanceId.getInstance().getToken());
     }
 }
