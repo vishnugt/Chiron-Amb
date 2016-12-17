@@ -16,8 +16,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,7 +49,6 @@ public class MainActivity extends Activity {
     public void btnn(View view)
     {
         Intent intent = new Intent(this, Webdisplay.class);
-
         startActivity(intent);
     }
 
@@ -92,21 +90,17 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         tracker = new GPSTracker(this);
-
-
-
-
         SharedPreferences prefs = getSharedPreferences("dbb", MODE_PRIVATE);
         id = prefs.getString("id", "0");
         fcm = prefs.getString("fcm", "fcm");
 
-//        if (id.matches("0"))
-//        {
+        if (id.matches("0"))
+        {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
-//        }
+        }
 
         start();
 
@@ -116,7 +110,7 @@ public class MainActivity extends Activity {
         // Gets to GoogleMap from the MapView and does initialization stuff
         map = mapView.getMap();
         map.getUiSettings().setMyLocationButtonEnabled(false);
-        //map.setMyLocationEnabled(true);
+        map.setMyLocationEnabled(true);
 
         MapsInitializer.initialize(this);
 
