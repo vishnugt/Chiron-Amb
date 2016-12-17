@@ -1,13 +1,10 @@
 package com.npincomplete.pragyanhackathonamb;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -39,7 +36,7 @@ import de.tavendo.autobahn.WebSocketHandler;
 
 import static android.R.id.toggle;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     String id;
 
@@ -49,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     String latt;
     String longg;
 
+    String fcm;
     public void btnn(View view)
     {
         Intent intent = new Intent(this, Webdisplay.class);
@@ -94,22 +92,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         tracker = new GPSTracker(this);
-        start();
 
 
 
 
         SharedPreferences prefs = getSharedPreferences("dbb", MODE_PRIVATE);
-        id = prefs.getString("id", null);
+        id = prefs.getString("id", "0");
+        fcm = prefs.getString("fcm", "fcm");
 
-        if (id == null )
-        {
+//        if (id.matches("0"))
+//        {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
-        }
+//        }
 
+        start();
 
         mapView = (MapView) findViewById(R.id.mapview);
         mapView.onCreate(savedInstanceState);
@@ -117,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         // Gets to GoogleMap from the MapView and does initialization stuff
         map = mapView.getMap();
         map.getUiSettings().setMyLocationButtonEnabled(false);
-        map.setMyLocationEnabled(true);
+        //map.setMyLocationEnabled(true);
 
         MapsInitializer.initialize(this);
 
@@ -153,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
                 json.put("Id", Integer.parseInt(id));
                 json.put("Lat", String.valueOf(tracker.getLatitude()) );
                 json.put("Long", String.valueOf(tracker.getLongitude()) );
+                json.put("Token", fcm);
             }
             catch(JSONException j)
             {

@@ -6,10 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -93,7 +89,7 @@ public class LoginActivity extends Activity {
             }
 
             try {
-                URL url = new URL("https://4e16c88d.ngrok.io/vehicle/register");
+                URL url = new URL("https://4e16c88d.ngrok.io/vehicle/login");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setDoOutput(true);
@@ -136,7 +132,8 @@ public class LoginActivity extends Activity {
 
         String id = null;
         Toast.makeText(this, outputresponse, Toast.LENGTH_SHORT).show();
-        if( outputresponse != null) {
+        if( outputresponse != null)
+        {
             try
             {
                 JSONObject json = new JSONObject(outputresponse);
@@ -147,7 +144,6 @@ public class LoginActivity extends Activity {
             }
 
             if(id == null )
-
             {
                 Toast.makeText(this, "Username password wrong combination!", Toast.LENGTH_SHORT).show();
                 return;
@@ -157,7 +153,7 @@ public class LoginActivity extends Activity {
             editor.putString("id", id);
             editor.commit();
             Log.d("fcmid", fcm);
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         }
     }

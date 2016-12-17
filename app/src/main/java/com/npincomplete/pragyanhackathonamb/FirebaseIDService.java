@@ -38,7 +38,6 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
         editor.putString("fcm", token);
         editor.commit();
         // Add custom implementation, as needed.
-
         Log.d("fcmid", FirebaseInstanceId.getInstance().getToken());
     }
 }
