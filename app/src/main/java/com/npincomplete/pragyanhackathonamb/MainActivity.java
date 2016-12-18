@@ -117,11 +117,6 @@ public class MainActivity extends AppCompatActivity {
         //getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         //getActionBar().hide();
 
-        if (getIntent().getExtras() != null) {
-            Bundle b = getIntent().getExtras();
-            cameFromNotification = b.getBoolean("fromNotification");
-        }
-
 
 
         //toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -136,16 +131,6 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("dbb", MODE_PRIVATE);
         id = prefs.getString("id", "0");
         fcm = prefs.getString("fcm", "fcm");
-/*
-
-        if (id.matches("0"))
-        {
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            finish();
-        }
-*/
 
         start();
 
@@ -267,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.d("in async", json.toString());
                 try {
-                    URL url = new URL("http://02a4ba0f.ngrok.io/amb/update");
+                    URL url = new URL("http://02a4ba0f.ngrok.io/vehicle/finish");
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("POST");
                     connection.setDoOutput(true);
