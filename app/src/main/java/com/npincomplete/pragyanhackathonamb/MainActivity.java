@@ -1,12 +1,18 @@
 package com.npincomplete.pragyanhackathonamb;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -35,7 +41,7 @@ import de.tavendo.autobahn.WebSocketHandler;
 
 import static android.R.id.toggle;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
     String id;
 
@@ -45,11 +51,21 @@ public class MainActivity extends Activity {
     String latt;
     String longg;
 
+
+
+
+
     String fcm;
     public void btnn(View view)
     {
-        Intent intent = new Intent(this, Webdisplay.class);
-        startActivity(intent);
+
+        progress = new ProgressDialog(this);
+        progress.setTitle("Loading");
+        progress.setMessage("Wait while loading...");
+        progress.setCancelable(false);
+        progress.show();
+        new MasterTask().execute();
+
     }
 
     private static final String TAG = "de.tavendo.test1";
@@ -84,10 +100,36 @@ public class MainActivity extends Activity {
         }
     }
 
+
+    public boolean onOptionsItemSelected(MenuItem item){
+        this.finish();
+        return true;
+
+    }
+    boolean cameFromNotification = false;
+    Button btn;
+    Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        btn = (Button)findViewById(R.id.btnnn);
+
+        if (getIntent().getExtras() != null) {
+            Bundle b = getIntent().getExtras();
+            cameFromNotification = b.getBoolean("fromNotification");
+        }
+
+
+
+        //toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //
+        //    setSupportActionBar(toolbar);
+
+
+//        ActionBar actionBar = getActionBar();
+//        actionBar.setDisplayHomeAsUpEnabled(true);
 
         tracker = new GPSTracker(this);
         SharedPreferences prefs = getSharedPreferences("dbb", MODE_PRIVATE);
@@ -121,21 +163,6 @@ public class MainActivity extends Activity {
         //new MasterTask().execute();
 
     }
-/*
-
-    JSONObject json = new JSONObject();
-    try {
-        json.put("Id", id);
-        json.put("Lat", tracker.getLatitude());
-        json.put("Long", tracker.getLocation());
-    }
-    catch(JSONException j)
-    {
-
-    }
-    mConnection.sendTextMessage(json.toString());
-*/
-
 
 
     private class TickerAsync extends AsyncTask<String, Void, String> {
@@ -169,7 +196,7 @@ public class MainActivity extends Activity {
         @Override
         protected void onPostExecute(String result) {
             //  progress.dismiss();
-            Toast.makeText(getApplicationContext(), outputresponse, Toast.LENGTH_SHORT).show();
+          //  Toast.makeText(getApplicationContext(), outputresponse, Toast.LENGTH_SHORT).show();
             new TickerAsync().execute();
         }
 
@@ -224,9 +251,11 @@ public class MainActivity extends Activity {
                 try
                 {
                     json.put("Id", Integer.parseInt(id));
+/*
                     json.put("Lat", Double.toString(tracker.getLatitude()));
                     json.put("Long", Double.toString(tracker.getLongitude()));
                     json.put("Status", status);
+*/
                 }
                 catch(JSONException e)
                 {
@@ -265,12 +294,73 @@ public class MainActivity extends Activity {
         }
         @Override
         protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            //Toast.makeText(getApplicationContext(), "Posted GPS", Toast.LENGTH_SHORT).show();
-            new MasterTask().execute();
-            //tv.setText("Sending Data every 5 seconds...      Latest Lat Long is (" + tracker.getLatitude() +  ", "+tracker.getLongitude() + ")");
+            progress.dismiss();
+        }
+    }
+    ProgressDialog progress;
+
+        private class dropPatient extends AsyncTask<String, Integer, String> {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+            }
+            @Override
+            protected String doInBackground(String... params) {
+                try {
+                    json = new JSONObject();
+                    try
+                    {
+                        json.put("Id", Integer.parseInt(id));
+
+                         }
+                    catch(JSONException e)
+                    {
+                        Log.d("error", "jsonexception");
+                    }
+
+                    Log.d("in async", json.toString());
+                    try {
+                        URL url = new URL("http://02a4ba0f.ngrok.io/amb/update");
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.setRequestMethod("POST");
+                        connection.setDoOutput(true);
+                        connection.setRequestProperty("Content-Type", "application/json");
+                        OutputStreamWriter osw = new OutputStreamWriter(connection.getOutputStream());
+                        osw.write(String.format( String.valueOf(json)));
+                        osw.flush();
+                        osw.close();
+
+
+                        InputStream stream = connection.getInputStream();
+                        InputStreamReader isReader = new InputStreamReader(stream );
+                        BufferedReader br = new BufferedReader(isReader );
+                        outputresponse = br.readLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return "";
+            }
+            @Override
+            protected void onProgressUpdate(Integer... values) {
+                super.onProgressUpdate(values);
+            }
+            @Override
+            protected void onPostExecute(String result) {
+                super.onPostExecute(result);
+                //Toast.makeText(getApplicationContext(), "Posted GPS", Toast.LENGTH_SHORT).show();
+                new MainActivity.MasterTask().execute();
+                //tv.setText("Sending Data every 5 seconds...      Latest Lat Long is (" + tracker.getLatitude() +  ", "+tracker.getLongitude() + ")");
+            }
+
         }
 
-    }
 
-    }
+
+
+
+}
