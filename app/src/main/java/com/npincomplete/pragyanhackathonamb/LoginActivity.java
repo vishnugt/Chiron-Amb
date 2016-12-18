@@ -1,12 +1,15 @@
 package com.npincomplete.pragyanhackathonamb;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -27,7 +30,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends AppCompatActivity {
 
 
     EditText et1, et2;
@@ -38,6 +41,13 @@ public class LoginActivity extends Activity {
         et1 = (EditText)findViewById(R.id.email);
         et2 = (EditText)findViewById(R.id.password);
         et1.requestFocus();
+
+        ActionBar actionBar = getActionBar();
+//        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        SharedPreferences prefs = getSharedPreferences("db", MODE_PRIVATE);
+        fcm = prefs.getString("fcm", "fcm");
+
     }
 
 
@@ -48,15 +58,23 @@ public class LoginActivity extends Activity {
 
     GPSTracker tracker;
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        onBackPressed();
+        finish();
+        return true;
+
+    }
     public void btnfunc(View v)
     {
-/*
-        progress = new ProgressDialog(getApplicationContext());
+
+
+        progress = new ProgressDialog(this);
         progress.setTitle("Loading");
         progress.setMessage("Wait while loading...");
         progress.setCancelable(false);
         progress.show();
-*/
+
 
         tracker = new GPSTracker(this);
         new LongOperation2().execute(et1.getText().toString(), et2.getText().toString());
@@ -70,8 +88,6 @@ public class LoginActivity extends Activity {
         protected String doInBackground(String... params) {
 
 
-            SharedPreferences prefs = getSharedPreferences("db", MODE_PRIVATE);
-            fcm = prefs.getString("fcm", "fcm");
 
             json = new JSONObject();
             try
@@ -112,8 +128,8 @@ public class LoginActivity extends Activity {
 
         @Override
         protected void onPostExecute(String result) {
-            //  progress.dismiss();
-            Toast.makeText(getApplicationContext(), outputresponse, Toast.LENGTH_SHORT).show();
+            progress.dismiss();
+            //Toast.makeText(getApplicationContext(), outputresponse, Toast.LENGTH_SHORT).show();
             aftercomplete();
         }
 
@@ -131,7 +147,7 @@ public class LoginActivity extends Activity {
     {
 
         String id = null;
-        Toast.makeText(this, outputresponse, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, outputresponse, Toast.LENGTH_SHORT).show();
         if( outputresponse != null)
         {
             try

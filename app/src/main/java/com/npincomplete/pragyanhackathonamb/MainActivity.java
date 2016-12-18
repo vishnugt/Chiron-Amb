@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -50,9 +51,6 @@ public class MainActivity extends AppCompatActivity {
 
     String latt;
     String longg;
-
-
-
 
 
     String fcm;
@@ -116,6 +114,9 @@ public class MainActivity extends AppCompatActivity {
 
         btn = (Button)findViewById(R.id.btnnn);
 
+        //getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+        //getActionBar().hide();
+
         if (getIntent().getExtras() != null) {
             Bundle b = getIntent().getExtras();
             cameFromNotification = b.getBoolean("fromNotification");
@@ -135,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("dbb", MODE_PRIVATE);
         id = prefs.getString("id", "0");
         fcm = prefs.getString("fcm", "fcm");
+/*
 
         if (id.matches("0"))
         {
@@ -143,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+*/
 
         start();
 
