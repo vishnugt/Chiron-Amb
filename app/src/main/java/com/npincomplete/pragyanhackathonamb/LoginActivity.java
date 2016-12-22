@@ -105,7 +105,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             try {
-                URL url = new URL("https://4e16c88d.ngrok.io/vehicle/login");
+                URL url = new URL("http://52.66.134.228:4000/vehicle/login");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setDoOutput(true);
