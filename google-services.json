@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1014574190979",
+    "firebase_url": "https://pragyanhakathonamb.firebaseio.com",
+    "project_id": "pragyanhakathonamb",
+    "storage_bucket": "pragyanhakathonamb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1014574190979:android:cfe92e0858fbfcef",
+        "android_client_info": {
+          "package_name": "com.npincomplete.pragyanhackathonamb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1014574190979-utms67cqid3rd0eejjas0t78tgtcvlh5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgx3sM2ooQbo84k3X8F37qph0TFx9bIHk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

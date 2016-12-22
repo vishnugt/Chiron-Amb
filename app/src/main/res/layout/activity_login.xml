@@ -10,6 +10,13 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.npincomplete.pragyanhackathonamb.LoginActivity">
 
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+</android.support.design.widget.AppBarLayout>
+
+
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
@@ -29,9 +36,32 @@
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Auth token provided by Admin"
+                    android:hint="Username"
                     android:inputType="text"
                     android:maxLines="1"
+                    android:singleLine="true" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <AutoCompleteTextView
+                    android:id="@+id/password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Password"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:password="true"
                     android:singleLine="true" />
 
             </android.support.design.widget.TextInputLayout>
@@ -49,8 +79,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Verify Auth Token"
+                android:text="Login"
                 android:textStyle="bold"
+                android:textColor="@color/emergency"
+                android:background="@color/background"
                 android:onClick="btnfunc"/>
 
         </LinearLayout>

@@ -80,7 +80,7 @@ public class FormFill extends AppCompatActivity {
 
             try {
                 Log.d("gg", json.toString());
-                URL url = new URL("http://23b8e3b4.ngrok.io/amb/update");
+                URL url = new URL("http://52.66.134.228:4000/amb/update");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setDoOutput(true);

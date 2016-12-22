@@ -1,19 +1,23 @@
 package com.npincomplete.pragyanhackathonamb;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.google.firebase.iid.FirebaseInstanceId;
+
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,7 +39,15 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         et1 = (EditText)findViewById(R.id.email);
+        et2 = (EditText)findViewById(R.id.password);
         et1.requestFocus();
+
+        ActionBar actionBar = getActionBar();
+//        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        SharedPreferences prefs = getSharedPreferences("db", MODE_PRIVATE);
+        fcm = prefs.getString("fcm", "fcm");
+
     }
 
 
@@ -44,6 +56,15 @@ public class LoginActivity extends AppCompatActivity {
     JSONObject json;
     String outputresponse = "";
 
+    GPSTracker tracker;
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        onBackPressed();
+        finish();
+        return true;
+
+    }
     public void btnfunc(View v)
     {
 
@@ -53,19 +74,29 @@ public class LoginActivity extends AppCompatActivity {
         progress.setMessage("Wait while loading...");
         progress.setCancelable(false);
         progress.show();
-        new LongOperation2().execute(et1.getText().toString());
+
+
+        tracker = new GPSTracker(this);
+        new LongOperation2().execute(et1.getText().toString(), et2.getText().toString());
     }
 
+
+    String fcm;
 
     private class LongOperation2 extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
 
 
+
             json = new JSONObject();
             try
             {
-                json.put("auth_token",params[0]);
+                json.put("Username", params[0] );
+                json.put("Password", params[1] );
+                json.put("Lat", String.valueOf(tracker.getLatitude()) );
+                json.put("Long", String.valueOf(tracker.getLongitude()) );
+                json.put("Token", fcm);
 
             }catch (JSONException j)
 
@@ -74,7 +105,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             try {
-                URL url = new URL("http://23b8e3b4.ngrok.io/amb/register");
+                URL url = new URL("http://52.66.134.228:4000/vehicle/login");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setDoOutput(true);
@@ -97,7 +128,8 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(getApplicationContext(), outputresponse, Toast.LENGTH_SHORT).show();
+            progress.dismiss();
+            //Toast.makeText(getApplicationContext(), outputresponse, Toast.LENGTH_SHORT).show();
             aftercomplete();
         }
 
@@ -113,13 +145,33 @@ public class LoginActivity extends AppCompatActivity {
 
     public void aftercomplete()
     {
-        progress.dismiss();
 
-        Log.d("login", outputresponse);
+        String id = null;
+        //Toast.makeText(this, outputresponse, Toast.LENGTH_SHORT).show();
+        if( outputresponse != null)
+        {
+            try
+            {
+                JSONObject json = new JSONObject(outputresponse);
+                id = json.getString("Id");
+            } catch (JSONException j)
+            {
+                Log.d("error", "noob error");
+            }
 
-        Intent intent = new Intent(this, Registeration.class);
-        intent.putExtra("outputresponse", outputresponse);
-        startActivity(intent);
+            if(id == null )
+            {
+                Toast.makeText(this, "Username password wrong combination!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            SharedPreferences.Editor editor = getSharedPreferences("dbb", MODE_PRIVATE).edit();
+            editor.putString("id", id);
+            editor.commit();
+            Log.d("fcmid", fcm);
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
     }
 
 }
